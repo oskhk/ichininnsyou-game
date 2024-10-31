@@ -37,7 +37,7 @@
             ],
             "correctAnswer": ["俺", "僕"],
             "correctImage": "im/maru1.png",
-            "incorrectImage": "im/batsu1.png"
+            "incorrectImage": "im/images-1.jpg"
             
         },
         {
@@ -58,7 +58,7 @@
             ],
             "correctAnswer": ["俺", "僕"],
             "correctImage": "im/maru1.png",
-            "incorrectImage": "im/batsu1.png"
+            "incorrectImage": "im/images.jpg"
         },
         {
             "title": "会社の会議での発表",
@@ -77,8 +77,8 @@
                 "「俺」は会議のようなフォーマルな場ではカジュアルすぎるため、不適切です。"
             ],
             "correctAnswer": ["私"],
-            "correctImage": "im/maru1.png",
-            "incorrectImage": "im/batsu1.png"
+            "correctImage": "im/d.jpg",
+            "incorrectImage": "im/b.jpg"
         },        
         {
             "title": "上司への進捗報告",
@@ -97,8 +97,8 @@
                 "「私」はフォーマルで、ビジネスの進捗報告には最適です。"
             ],
             "correctAnswer": ["私", "僕"],
-            "correctImage": "im/maru1.png",
-            "incorrectImage": "im/batsu1.png"
+            "correctImage": "im/d.jpg",
+            "incorrectImage": "im/b.jpg"
         },
         {
             "title": "病院での仕事会話",
