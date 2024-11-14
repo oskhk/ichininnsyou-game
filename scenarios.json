@@ -1,65 +1,85 @@
 {
     "maleStages": [
         {
-            "title": "大学のグループ課題",
-            "image": "im/images-3.jpg",
-            "description": "授業でグループになった友達と課題について会話",
+            "title": "カフェでの友人とのランチ",
+            "image": "im/cafe_lunch.jpg",
+            "correctImage": "im/correct_mark1.png",
+            "incorrectImage": "im/incorrect_mark1.jpg",
+            "description": "友人とランチをしながら、日常の話題について会話",
             "bubbles": [
-                "レポート、もう書き終わった？",
-                "まだだけど、残りは家でやろうかな",
-                "そうだね、もう遅いし"
+              "{name}、最近どう？忙しそうだけど。",
+              "まぁ、バイトと授業でちょっとね。でも、楽しいよ。",
+              "そっか、たまには息抜きも大事だよな。"
             ],
-            "response": "じゃあ(   )も今日は家でやるね、また明日集まって確認しよう",
+            "response": "(   )もたまにはリフレッシュしようかなと思ってるんだ。",
             "options": ["俺", "僕", "私"],
             "feedback": [
-                "「俺」は親しいクラスメートとの会話で自然な選択です。",
-                "「僕」はやや丁寧さを保ちつつも、カジュアルな場面で使われます。",
-                "「私」はフォーマルすぎる印象を与え、クラスメートとの会話にはやや不自然です。"
+              "「俺」を使うと、親しい友人とのカジュアルな会話にぴったりです。リラックスした雰囲気を作り出します。",
+              "「僕」は控えめで親しみやすい印象を与えます。柔らかい雰囲気で、友人との会話に適しています。",
+              "「私」は少しフォーマルな印象があり、友人とのカジュアルな会話では堅苦しく感じられることがあります。"
             ],
-            "correctAnswer": ["俺", "僕"],
-            "correctImage": "im/maru1.png",
-            "incorrectImage": "im/batsu1.png"
-        },
-        {
-            "title": "カフェでの友人との会話",
-            "image": "im/images.jpg",
-            "description": "友人とカフェで飲み物を頼むとき",
+            "correctAnswer": ["俺", "僕"]
+          },
+          {
+            "title": "グループ課題の話し合い",
+            "image": "im/group_discussion.jpg",
+            "correctImage": "im/correct_mark2.png",
+            "incorrectImage": "im/incorrect_mark2.png",
+            "description": "クラスメートとグループ課題の進行状況について話し合っている",
             "bubbles": [
-                "今日暑いね、何飲む？",
-                "いつもはホットコーヒーだけど、今日はアイス！"
+              "{name}、パワーポイントのスライドはどう？進んでる？",
+              "うん、少しずつだけどやってるよ。でも、まとめるのはまだかな。",
+              "じゃあ、こっちも資料集めを手伝うね。"
             ],
-            "response": "(   )はプラペチーノにしようかな",
+            "response": "(   )もできる限りまとめてみるよ。",
             "options": ["俺", "僕", "私"],
             "feedback": [
-                "「俺」は友人との会話でリラックスした雰囲気にぴったりです。",
-                "「僕」は少し控えめで、親しみを持たせつつも丁寧さを保ちます。",
-                "「私」はフォーマルすぎて、友人同士の会話では少し硬い印象になります。"
+              "「俺」は親しい友人や同級生との協力的な場面で自然に使えます。チームワークを強調する際に適しています。",
+              "「僕」は控えめで謙虚な印象を与え、協力的な姿勢を柔らかく表現します。グループ作業に適しています。",
+              "「私」は少しフォーマルな印象があり、対等な関係のクラスメート同士ではやや距離を感じさせることがあります。"
             ],
-            "correctAnswer": ["俺", "僕"],
-            "correctImage": "im/maru1.png",
-            "incorrectImage": "im/images-1.jpg"
-            
-        },
-        {
-            "title": "友人との飲み会",
-            "image": "im/images-2.jpg",
-            "description": "飲み会の終わり頃、二次会の誘い",
+            "correctAnswer": ["俺", "僕"]
+          },
+          {
+            "title": "授業後の帰り道での会話",
+            "image": "im/walk_home.jpg",
+            "correctImage": "im/correct_mark3.png",
+            "incorrectImage": "im/incorrect_mark3.png",
+            "description": "授業が終わり、友人と一緒に帰りながら近況について話す",
             "bubbles": [
-                "もう一杯いく？",
-                "まだまだ元気だから、いけるね。",
-                "{name}はどうする？"
+              "最近、授業どう？忙しくない？",
+              "まぁまぁかな。{name}はどう？課題多いって聞いたけど。",
+              "そうだね、自分もいっぱいいっぱいだよ。でも頑張ってるよ。"
             ],
-            "response": "(   )は全然いいよ、次のお店探してみよっか。",
+            "response": "大変だけど、(   )もなんとかやってる。",
             "options": ["俺", "僕", "私"],
             "feedback": [
-                "「俺」は友人とのカジュアルな飲み会で最も自然です。",
-                "「僕」は少し控えめで、親しいけれど丁寧さを感じさせます。",
-                "「私」はフォーマルすぎて、飲み会のカジュアルな場面では硬く感じます。"
+              "「俺」は親しい友人との本音トークに適しています。リラックスした雰囲気で、率直な気持ちを伝えられます。",
+              "「僕」は柔らかく控えめな印象で、相手に対して共感的に聞こえます。親しみやすい表現です。",
+              "「私」はフォーマルな印象があり、友人とのカジュアルな会話では少し堅苦しく感じられることがあります。"
             ],
-            "correctAnswer": ["俺", "僕"],
-            "correctImage": "im/maru1.png",
-            "incorrectImage": "im/images.jpg"
-        },
+            "correctAnswer": ["俺", "僕"]
+          },
+          {
+            "title": "友人と週末の予定を話す",
+            "image": "im/weekend_plan.jpg",
+            "correctImage": "im/correct_mark4.png",
+            "incorrectImage": "im/incorrect_mark4.png",
+            "description": "友人と週末に何をするかについて話し合う",
+            "bubbles": [
+              "週末、みんなでどっか行かない？",
+              "{name}も来るでしょ？",
+              "もちろん！楽しみにしてるから。"
+            ],
+            "response": "(   )も、たまには思い切り遊びたいな。",
+            "options": ["俺", "僕", "私"],
+            "feedback": [
+              "「俺」は親しい友人とのカジュアルな会話に適しています。リラックスした雰囲気で、率直な気持ちを伝えられます。",
+              "「僕」は控えめで穏やかな印象を与え、リラックスした場面で自然に聞こえます。親しみやすい表現です。",
+              "「私」はフォーマルな印象があり、友人同士のカジュアルな会話では少し堅苦しく感じられることがあります。"
+            ],
+            "correctAnswer": ["俺", "僕"]
+          },
         {
             "title": "会社の会議での発表",
             "description": "新しいプロジェクトについて、会議での発表を行っている",
@@ -77,9 +97,10 @@
                 "「俺」は会議のようなフォーマルな場ではカジュアルすぎるため、不適切です。"
             ],
             "correctAnswer": ["私"],
-            "correctImage": "im/d.jpg",
-            "incorrectImage": "im/b.jpg"
+            "correctImage": "im/maru1.png",
+            "incorrectImage": "im/batsu1.png"
         },        
+
         {
             "title": "上司への進捗報告",
             "image": "im/images-4.jpg",
@@ -97,9 +118,10 @@
                 "「私」はフォーマルで、ビジネスの進捗報告には最適です。"
             ],
             "correctAnswer": ["私", "僕"],
-            "correctImage": "im/d.jpg",
-            "incorrectImage": "im/b.jpg"
+            "correctImage": "im/maru1.png",
+            "incorrectImage": "im/batsu1.png"
         },
+
         {
             "title": "病院での仕事会話",
             "image": "im/images-5.jpg",
@@ -119,6 +141,7 @@
             "correctImage": "im/maru1.png",
             "incorrectImage": "im/batsu1.png"
         },
+
         {
             "title": "工場での生産ラインについての会話",
             "image": "im/images-6.jpg",
@@ -139,6 +162,7 @@
             "incorrectImage": "im/batsu1.png"
         }
     ],
+    
     "femaleStages": [
         {
             "title": "カフェでの友人との会話",
