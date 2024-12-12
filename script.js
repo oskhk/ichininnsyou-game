@@ -1,10 +1,13 @@
 let currentStage = 0;
 let correctAnswers = 0;
+let totalStages = 20;
 let stages = [];
 let currentBubbleIndex = 0;
 let selectedGender = '';
 let maleStages = [];
 let femaleStages = [];
+let answers = [];
+let cameFromEndingScreen = false;
 
 fetch('scenarios.json')
     .then(response => response.json())
@@ -12,9 +15,7 @@ fetch('scenarios.json')
         maleStages = data.maleStages;
         femaleStages = data.femaleStages;
     })
-    .catch(error => {
-        console.error("JSONファイルの読み込みに失敗しました:", error);
-    });
+    .catch(error => console.error('JSONのロードに失敗しました:', error));
 
 document.getElementById('maleButton').onclick = () => {
     selectedGender = 'male';
@@ -29,11 +30,9 @@ document.getElementById('femaleButton').onclick = () => {
 function updateSelectedButton(selectedId, otherId) {
     const selectedButton = document.getElementById(selectedId);
     const otherButton = document.getElementById(otherId);
-
     selectedButton.classList.add('selected');
     otherButton.classList.remove('selected');
 }
-
 
 document.getElementById('startButton').onclick = () => {
     if (selectedGender === 'male') {
@@ -41,6 +40,10 @@ document.getElementById('startButton').onclick = () => {
     } else if (selectedGender === 'female') {
         stages = femaleStages;
     }
+
+    stages = shuffle(stages);
+    answers = new Array(stages.length);
+    cameFromEndingScreen = false;
     switchScreen('startScreen', 'gameScreen');
     loadStage(stages[currentStage]);
 };
@@ -53,23 +56,35 @@ function switchScreen(hideScreenId, showScreenId) {
 function loadStage(stage) {
     document.getElementById('scenarioTitle').textContent = stage.title;
     document.getElementById('scenarioDescription').textContent = stage.description;
-    document.getElementById('characterImage').src = stage.image;
-    
-    const playerName = document.getElementById('playerName').value;
-    const responseText = stage.response.replace("{name}", playerName);
+
+    const playerName = document.getElementById('playerName').value || 'あなた';
+    const responseText = stage.response.replace(/{name}/g, playerName);
     document.getElementById('response').textContent = responseText;
 
-    document.getElementById('stageNumber').textContent = `ステージ ${currentStage + 1}`;
-    
-    const bubbles = [document.getElementById('bubble1'), document.getElementById('bubble2'), document.getElementById('bubble3')];
-    bubbles.forEach((bubble, index) => {
-        const bubbleText = stage.bubbles[index].replace("{name}", playerName);
-        bubble.textContent = bubbleText;
-        bubble.style.display = 'none';
-    });
-    currentBubbleIndex = 0;
+    const imageArea = document.getElementById('imageArea');
+    imageArea.innerHTML = '';
 
+    preloadImage(stage.image)
+        .then(img => {
+            img.alt = "キャラクター";
+            img.className = 'character-image';
+            imageArea.appendChild(img);
+        })
+        .catch(error => {
+            console.error('画像のロードに失敗しました:', error);
+        });
+
+    stage.bubbles.forEach((bubbleText, index) => {
+        const bubble = document.createElement('div');
+        bubble.className = 'speech-bubble';
+        bubble.textContent = bubbleText.replace(/{name}/g, playerName);
+        bubble.style.display = 'none';
+        imageArea.appendChild(bubble);
+    });
+
+    currentBubbleIndex = 0;
     document.getElementById('feedback').textContent = '';
+
     const optionsContainer = document.getElementById('optionsContainer');
     optionsContainer.innerHTML = '';
 
@@ -78,124 +93,44 @@ function loadStage(stage) {
         const button = document.createElement('button');
         button.className = 'option';
         button.textContent = optionText;
-        button.onclick = () => selectOption(index, stage.feedback[stage.options.indexOf(optionText)]);
+        button.onclick = () => {
+            selectOption(index, stage, stage.feedback[stage.options.indexOf(optionText)]);
+        };
         optionsContainer.appendChild(button);
     });
 
-    resetEventHandlers();
-}
+    setupNextStageButton();
+    setupResetBubbleButton(imageArea);
+    setupEventHandlers(imageArea);
+    updateProgress();
 
-
-
-document.getElementById('imageArea').onclick = () => {
-    const bubbles = [document.getElementById('bubble1'), document.getElementById('bubble2'), document.getElementById('bubble3')];
-    if (currentBubbleIndex < bubbles.length) {
-        bubbles[currentBubbleIndex].style.display = 'block';
-        currentBubbleIndex++;
-    }
-};
-
-function selectOption(optionIndex, feedback) {
-    const options = document.querySelectorAll('.option');
-    const currentCorrectAnswers = stages[currentStage].correctAnswer;
-    const selectedAnswer = options[optionIndex].textContent;
-
-    const correctMark = document.getElementById('correctMark');
-    const incorrectMark = document.getElementById('incorrectMark');
-
-    const stage = stages[currentStage];
-    correctMark.src = stage.correctImage;
-    incorrectMark.src = stage.incorrectImage;
-
-    options.forEach((option, idx) => {
-        if (idx === optionIndex) {
-            if (currentCorrectAnswers.includes(selectedAnswer)) {
-                option.classList.add('correct-animation');
-                correctMark.style.display = 'block';
-                correctMark.classList.add('correct-animation-mark');
-                
-                setTimeout(() => {
-                    correctMark.style.display = 'none';
-                    correctMark.classList.remove('correct-animation-mark');
-                }, 1000);
-
-                if (!option.classList.contains('counted')) {
-                    correctAnswers++;
-                    option.classList.add('counted');
-                }
-            } else {
-                option.classList.add('incorrect-animation');
-                incorrectMark.style.display = 'block';
-                incorrectMark.classList.add('incorrect-animation-mark');
-                
-                setTimeout(() => {
-                    incorrectMark.style.display = 'none';
-                    incorrectMark.classList.remove('incorrect-animation-mark');
-                }, 1000);
-            }
-        }
-    });
-
-    document.getElementById('feedback').textContent = feedback;
-    document.getElementById('nextStageButton').style.display = 'block';
-}
-
-
-
-
-
-document.getElementById('backButton').onclick = () => {
-    const options = document.querySelectorAll('.option');
-    options.forEach(option => {
-        option.classList.remove('correct-animation', 'incorrect-animation');
-        option.disabled = false;
-    });
-
-    document.getElementById('feedback').textContent = '';
-    document.getElementById('nextStageButton').style.display = 'none';
-
-    const bubbles = [document.getElementById('bubble1'), document.getElementById('bubble2'), document.getElementById('bubble3')];
-    bubbles.forEach(bubble => {
-        bubble.style.display = 'none';
-    });
-
-    currentBubbleIndex = 0; 
-};
-
-
-document.getElementById('nextStageButton').onclick = () => {
-    currentStage++;
-    if (currentStage < stages.length) {
-        loadStage(stages[currentStage]);
-        document.getElementById('nextStageButton').style.display = 'none';
+    const backToEndingButton = document.getElementById('backButton');
+    if (cameFromEndingScreen) {
+        backToEndingButton.style.display = 'block';
+        backToEndingButton.onclick = () => {
+            switchScreen('gameScreen', 'endingScreen');
+        };
     } else {
-        showEndingScreen();
+        backToEndingButton.style.display = 'none';
     }
-};
-
-function showEndingScreen() {
-    switchScreen('gameScreen', 'endingScreen');
-    const totalStages = stages.length;
-    const scoreSummary = `全 ${totalStages} ステージ中、${correctAnswers} ステージ正解しました。`;
-    document.getElementById('scoreSummary').textContent = scoreSummary;
 }
 
+function preloadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+    });
+}
 
-
-document.getElementById('retryButton').onclick = () => {
-    currentStage = 0;
-    correctAnswers = 0;
+function setupEventHandlers(imageArea) {
+    const bubbles = imageArea.querySelectorAll('.speech-bubble');
     currentBubbleIndex = 0;
 
-    switchScreen('endingScreen', 'startScreen');
-    document.getElementById('nextStageButton').style.display = 'none';
-    document.getElementById('feedback').textContent = '';
-};
+    imageArea.removeEventListener('click', imageArea.onclick);
 
-
-function resetEventHandlers() {
-    document.getElementById('imageArea').onclick = () => {
-        const bubbles = [document.getElementById('bubble1'), document.getElementById('bubble2'), document.getElementById('bubble3')];
+    imageArea.onclick = () => {
         if (currentBubbleIndex < bubbles.length) {
             const bubble = bubbles[currentBubbleIndex];
             bubble.style.display = 'block';
@@ -204,10 +139,181 @@ function resetEventHandlers() {
             bubble.classList.toggle('left', isLeft);
             bubble.classList.toggle('right', !isLeft);
 
-            const topOffset = currentBubbleIndex * 80;
-            bubble.style.top = `${topOffset}px`;
-
+            bubble.style.top = `${currentBubbleIndex * 80}px`;
             currentBubbleIndex++;
         }
     };
 }
+
+function highlightPlaceholder(text) {
+    return text.replace(/\(　\?　\)/g, '<span class="highlight">(　?　)</span>');
+}
+
+function loadStage(stage) {
+    document.getElementById('scenarioTitle').textContent = stage.title;
+    document.getElementById('scenarioDescription').textContent = stage.description;
+
+    const playerName = document.getElementById('playerName').value || 'あなた';
+    const responseText = highlightPlaceholder(stage.response.replace(/{name}/g, playerName));
+    document.getElementById('response').innerHTML = responseText; 
+
+    const imageArea = document.getElementById('imageArea');
+    imageArea.innerHTML = '';
+
+    preloadImage(stage.image)
+        .then(img => {
+            img.alt = "キャラクター";
+            img.className = 'character-image';
+            imageArea.appendChild(img);
+        })
+        .catch(error => {
+            console.error('画像のロードに失敗しました:', error);
+        });
+
+    stage.bubbles.forEach((bubbleText, index) => {
+        const bubble = document.createElement('div');
+        bubble.className = 'speech-bubble';
+        bubble.innerHTML = highlightPlaceholder(bubbleText.replace(/{name}/g, playerName));
+        bubble.style.display = 'none';
+        imageArea.appendChild(bubble);
+    });
+
+    currentBubbleIndex = 0;
+    document.getElementById('feedback').textContent = '';
+
+    const optionsContainer = document.getElementById('optionsContainer');
+    optionsContainer.innerHTML = '';
+
+    const randomizedOptions = [...stage.options].sort(() => Math.random() - 0.5);
+    randomizedOptions.forEach((optionText, index) => {
+        const button = document.createElement('button');
+        button.className = 'option';
+        button.textContent = optionText;
+        button.onclick = () => {
+            selectOption(index, stage, stage.feedback[stage.options.indexOf(optionText)]);
+        };
+        optionsContainer.appendChild(button);
+    });
+
+    setupNextStageButton();
+    setupResetBubbleButton(imageArea);
+    setupEventHandlers(imageArea);
+    updateProgress();
+
+    const backToEndingButton = document.getElementById('backButton');
+    if (cameFromEndingScreen) {
+        backToEndingButton.style.display = 'block';
+        backToEndingButton.onclick = () => {
+            switchScreen('gameScreen', 'endingScreen');
+        };
+    } else {
+        backToEndingButton.style.display = 'none';
+    }
+}
+
+
+
+function setupNextStageButton() {
+    const nextStageButton = document.getElementById('nextStageButton');
+    nextStageButton.style.display = 'none';
+    nextStageButton.onclick = () => {
+        currentStage++;
+        if (currentStage < stages.length) {
+            loadStage(stages[currentStage]);
+        } else {
+            showEndingScreen();
+        }
+    };
+}
+
+function selectOption(optionIndex, stage, feedback) {
+    const selectedAnswer = stage.options[optionIndex];
+
+    if (stage.correctAnswer.includes(selectedAnswer)) {
+        showResultImage(stage.correctImage);
+        correctAnswers++;
+    } else {
+        showResultImage(stage.incorrectImage);
+    }
+
+    answers[currentStage] = selectedAnswer;
+    document.getElementById('feedback').textContent = feedback;
+
+    const nextStageButton = document.getElementById('nextStageButton');
+    nextStageButton.style.display = 'block';
+}
+
+function setupResetBubbleButton(imageArea) {
+    const resetBubbleButton = document.getElementById('resetBubbleButton');
+    resetBubbleButton.style.display = 'block';
+    resetBubbleButton.onclick = () => resetBubbles(imageArea);
+}
+
+function resetBubbles(imageArea) {
+    const bubbles = imageArea.querySelectorAll('.speech-bubble');
+    bubbles.forEach((bubble) => {
+        bubble.style.display = 'none';
+    });
+    currentBubbleIndex = 0;
+}
+
+async function showResultImage(imagePath) {
+    const resultImage = document.createElement('img');
+    resultImage.src = imagePath;
+    resultImage.alt = "結果表示";
+    resultImage.className = 'result-mark';
+    document.body.appendChild(resultImage);
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    resultImage.remove();
+}
+
+function updateProgress() {
+    document.getElementById('stageClearCount').textContent = correctAnswers;
+    document.getElementById('stageProgressCount').textContent = currentStage + 1;
+    document.getElementById('totalStageCount').textContent = totalStages;
+}
+
+function showEndingScreen() {
+    switchScreen('gameScreen', 'endingScreen');
+    cameFromEndingScreen = true;
+
+    const scoreSummary = `全 ${totalStages} ステージ中、\n${correctAnswers} ステージ正解しました。`;
+    document.getElementById('scoreSummary').textContent = scoreSummary;
+
+    const incorrectStagesContainer = document.getElementById('incorrectStages');
+    incorrectStagesContainer.innerHTML = '';
+
+    stages.forEach((stage, i) => {
+        if (!stage.correctAnswer.includes(answers[i])) {
+            const stageElement = document.createElement('p');
+            stageElement.textContent = stage.title;
+            stageElement.className = 'incorrect-stage';
+            stageElement.onclick = () => {
+                currentStage = i;
+                loadStage(stage);
+                switchScreen('endingScreen', 'gameScreen');
+            };
+            incorrectStagesContainer.appendChild(stageElement);
+        }
+    });
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+document.getElementById('retryButton').onclick = () => {
+    currentStage = 0;
+    correctAnswers = 0;
+    currentBubbleIndex = 0;
+    answers = [];
+    cameFromEndingScreen = false;
+    switchScreen('endingScreen', 'startScreen');
+    document.getElementById('nextStageButton').style.display = 'none';
+    document.getElementById('feedback').textContent = '';
+};
